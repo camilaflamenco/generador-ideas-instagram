@@ -413,23 +413,37 @@
 
   var WORDS = buildDefaultWords();
 
-  // ---- Text generation: one piece of text built from both words' categories + hook ----
+  // ---- Text generation: 3 concrete format+content ideas built from both words' hooks ----
   function catsLine(item){
     return (item.categories || []).join(', ');
   }
 
-  var CLOSERS = [
-    'Antes de pensar en grabar algo nuevo, revisá si ya tenés fotos o clips sueltos de estas dos cosas — a veces alcanza con juntar lo que ya existe.',
-    'No hace falta que sea contenido nuevo: buscá en el rollo algo que ya conecte estas dos cosas.',
-    'Fijate primero qué tenés guardado de cada una por separado — capaz ya se puede armar algo solo editando junto.',
-    'Si no hay nada grabado todavía de esto, puede ser la excusa para un video corto — pero primero, revisá el archivo.'
+  // FORMAT_TEMPLATES only ever say "de <palabra>" (bare noun, no article issues) or drop the
+  // preposition and use the hook after a colon/parenthesis — keeps the Spanish grammatically safe
+  // regardless of whether a given hook happens to start with "el/la/los/las".
+  var FORMAT_TEMPLATES = [
+    function(a,b){ return 'Carrusel con momentos de ' + a.w + ' y de ' + b.w + ': ' + a.h + ', y también ' + b.h + '.'; },
+    function(a,b){ return 'Reel contando el proceso de ' + a.w + ' — ' + a.h + ' — hasta llegar a ' + b.w + '.'; },
+    function(a,b){ return 'Story mostrando ' + a.w + ' y ' + b.w + ' en el mismo día, sin explicarlo.'; },
+    function(a,b){ return 'Carrusel comparando ' + a.w + ' (' + a.h + ') con ' + b.w + ' (' + b.h + ').'; },
+    function(a,b){ return 'Reel corto de ' + a.w + ', usando ' + b.w + ' como cierre — ' + b.h + '.'; },
+    function(a,b){ return 'Carrusel de "antes y después" entre ' + a.w + ' y ' + b.w + '.'; }
   ];
 
+  var CLOSER = 'Antes de pensar en grabar algo nuevo, revisá si ya tenés fotos o clips sueltos de estas dos cosas — a veces alcanza con juntar lo que ya existe.';
+
+  function shuffle(arr){
+    var out = arr.slice();
+    for (var i = out.length - 1; i > 0; i--){
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = out[i]; out[i] = out[j]; out[j] = tmp;
+    }
+    return out;
+  }
+
   function generateText(a, b){
-    var closer = CLOSERS[Math.floor(Math.random() * CLOSERS.length)];
-    return a.w + ' (' + catsLine(a) + ')\n' + a.h + '.\n\n' +
-           b.w + ' (' + catsLine(b) + ')\n' + b.h + '.\n\n' +
-           closer;
+    var picks = shuffle(FORMAT_TEMPLATES).slice(0, 3).map(function(fn){ return fn(a, b); });
+    return picks.join('\n\n') + '\n\n' + CLOSER;
   }
 
   // ---- UI wiring ----
