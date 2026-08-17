@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Donaira — Generador de ideas para Instagram</title>
+<style>
+  :root{
+    --cream:#f6f1e7;
+    --cream-2:#efe7d6;
+    --ink:#2f2a22;
+    --olive:#4a5236;
+    --olive-dark:#333a25;
+    --terracotta:#b96a3d;
+    --gold:#a9862f;
+    --line:#dcd2ba;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--cream);
+    color:var(--ink);
+    font-family: Georgia, 'Iowan Old Style', 'Times New Roman', serif;
+    line-height:1.6;
+  }
+  .wrap{
+    max-width:600px;
+    margin:0 auto;
+    padding:56px 24px 60px;
+  }
+  header{
+    margin-bottom:36px;
+  }
+  .eyebrow{
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    text-transform:uppercase;
+    letter-spacing:.14em;
+    font-size:11px;
+    color:var(--terracotta);
+    margin-bottom:10px;
+  }
+  h1{
+    font-size:26px;
+    line-height:1.25;
+    margin:0 0 10px;
+    color:var(--olive-dark);
+    font-weight:400;
+  }
+  .lede{
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size:14px;
+    color:#5a5340;
+  }
+
+  .gen-grid{
+    display:grid;
+    grid-template-columns:1fr auto 1fr;
+    gap:16px;
+    align-items:center;
+    margin-bottom:22px;
+  }
+  @media (max-width:520px){
+    .gen-grid{grid-template-columns:1fr; }
+    .gen-x{transform:rotate(90deg); margin:2px auto;}
+  }
+  .gen-card{
+    background:var(--cream-2);
+    border:1px solid var(--line);
+    border-radius:2px;
+    padding:22px 18px;
+    text-align:center;
+  }
+  .gen-pillar{
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size:10.5px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--gold);
+    margin-bottom:8px;
+  }
+  .gen-word{
+    font-size:21px;
+    color:var(--olive-dark);
+    margin-bottom:4px;
+    min-height:26px;
+  }
+  .gen-cats{
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size:11px;
+    color:#8a8266;
+    min-height:14px;
+    margin-bottom:14px;
+  }
+  .gen-x{
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color:var(--terracotta);
+    font-size:16px;
+    text-align:center;
+  }
+  .gen-refresh{
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    border:1px solid var(--olive);
+    background:transparent;
+    color:var(--olive);
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    transition:background .15s ease, color .15s ease;
+  }
+  .gen-refresh:hover{ background:var(--olive); color:var(--cream); }
+  .gen-refresh.spin svg{ animation:gen-spin .5s ease; }
+  @keyframes gen-spin{ to{ transform:rotate(180deg); } }
+  .gen-refresh svg{width:15px;height:15px;}
+
+  .gen-btn-row{
+    text-align:center;
+    margin-bottom:34px;
+  }
+  .gen-shuffle-all{
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size:12.5px;
+    letter-spacing:.04em;
+    background:none;
+    border:1px solid var(--terracotta);
+    color:var(--terracotta);
+    padding:9px 20px;
+    border-radius:20px;
+    cursor:pointer;
+    transition:background .15s ease, color .15s ease;
+  }
+  .gen-shuffle-all:hover{ background:var(--terracotta); color:var(--cream); }
+
+  .gen-output{
+    border-left:2px solid var(--terracotta);
+    background:var(--cream-2);
+    padding:20px 22px;
+  }
+  .gen-output-text{
+    font-size:15.5px;
+    line-height:1.65;
+    white-space:pre-line;
+  }
+  .gen-output-word{
+    color:var(--olive-dark);
+  }
+
+  .gen-source{
+    margin-top:34px;
+    border-top:1px dashed var(--line);
+    padding-top:16px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  .gen-source-status{
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size:11.5px;
+    color:#8a8266;
+  }
+  .gen-source-actions{
+    display:flex;
+    gap:14px;
+    align-items:center;
+  }
+  .gen-source-btn{
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size:11.5px;
+    background:none;
+    border:none;
+    color:var(--olive);
+    text-decoration:underline;
+    cursor:pointer;
+    padding:0;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">La Donaira</div>
+    <h1>Generador de ideas para Instagram</h1>
+    <p class="lede">Gira las dos ruedas para cruzar dos palabras al azar. Abajo aparecen varias formas de convertir ese cruce en un post.</p>
+  </header>
+
+  <div class="gen-grid">
+    <div class="gen-card">
+      <div class="gen-pillar" id="genPillarA">—</div>
+      <div class="gen-word" id="genWordA">—</div>
+      <div class="gen-cats" id="genCatsA"></div>
+      <button class="gen-refresh" id="genRefreshA" aria-label="Cambiar palabra A" title="Cambiar esta palabra">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+      </button>
+    </div>
+
+    <div class="gen-x">×</div>
+
+    <div class="gen-card">
+      <div class="gen-pillar" id="genPillarB">—</div>
+      <div class="gen-word" id="genWordB">—</div>
+      <div class="gen-cats" id="genCatsB"></div>
+      <button class="gen-refresh" id="genRefreshB" aria-label="Cambiar palabra B" title="Cambiar esta palabra">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="gen-btn-row">
+    <button class="gen-shuffle-all" id="genShuffleAll">Girar las dos</button>
+  </div>
+
+  <div class="gen-output">
+    <div class="gen-output-text" id="genOutputText">—</div>
+  </div>
+
+  <div class="gen-source">
+    <span class="gen-source-status" id="genSourceStatus">Cargando…</span>
+    <div class="gen-source-actions">
+      <button class="gen-source-btn" id="genSourceRefresh">Actualizar desde Dropbox</button>
+      <button class="gen-source-btn" id="genLocalBtn">Cargar Excel a mano</button>
+    </div>
+    <input type="file" id="genFileInput" accept=".xlsx,.xls" style="display:none;">
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script>
+(function(){
+
+  // ---- Fixed data source: Camila's Dropbox file, always the same link ----
+  var DROPBOX_SHARE_URL = 'https://www.dropbox.com/scl/fi/7k9mw7w3pqzi42yegm9ao/plantilla-de-ideas.xlsx?rlkey=l4tmq8wup96f8avgfnfwtx941&st=4pv6ol7w&dl=0';
+
+  function toDirectDownload(shareUrl){
+    try {
+      var u = new URL(shareUrl);
+      u.searchParams.set('dl', '1');
+      return u.toString();
+    } catch (e){
+      return shareUrl.replace('dl=0', 'dl=1');
+    }
+  }
+
+  // ---- Fallback word bank (used only if Dropbox can't be reached) ----
+  var PILLAR_NAMES = {
+    AN:'Animales', BI:'Bienestar', CO:'Cocina', EX:'Experiencia',
+    FA:'Familias', HU:'Huerto', JM:'Jardín medicinal', PA:'Paisaje', VB:'Viñedo y bebidas'
+  };
+  var RAW_DEFAULT = [
+    {w:'cabras', p:'AN', h:'su lugar en el paisaje, el pastoreo'},
+    {w:'gallinas', p:'AN', h:'las que reciben las sobras de la cocina'},
+    {w:'huevos', p:'AN', h:'los que vuelven cada mañana a la mesa'},
+    {w:'burros', p:'AN', h:'el paseo de forest bathing con los burros'},
+    {w:'abejas', p:'AN', h:'la labor de las abejas esta semana'},
+    {w:'miel', p:'AN', h:'la miel que dejan las abejas'},
+    {w:'colmena', p:'AN', h:'lo que cambia en la colmena semana a semana'},
+    {w:'vaca wagyu', p:'AN', h:'la ganadería menos visible de la finca'},
+    {w:'oveja', p:'AN', h:'otro de los animales que pastan la finca'},
+    {w:'cordero', p:'AN', h:'parte de la ganadería de la finca'},
+    {w:'ocas', p:'AN', h:'las aves menos fotografiadas de la finca'},
+    {w:'pintadas', p:'AN', h:'otra de las aves de la finca'},
+    {w:'Juanjo', p:'AN', h:'quien cuida las colmenas y la biodiversidad'},
+    {w:'pastoreo', p:'AN', h:'los animales moviéndose por el paisaje'},
+    {w:'polinización', p:'AN', h:'el trabajo invisible de las abejas en el jardín'},
+    {w:'biodiversidad', p:'AN', h:'lo que sostiene a todos los animales de la finca'},
+    {w:'gallinero', p:'AN', h:'donde empieza el huevo del desayuno'},
+    {w:'convivencia animal', p:'AN', h:'cómo conviven los animales entre sí'},
+    {w:'cocina', p:'CO', h:'la cocina de la finca'},
+    {w:'Manuel', p:'CO', h:'la cocina de la semilla al plato'},
+    {w:'Nerea', p:'CO', h:'la cocina de la semilla al plato'},
+    {w:'pan', p:'CO', h:'el pan que sale cada mañana del horno'},
+    {w:'masa madre', p:'CO', h:'la masa madre de Paqui'},
+    {w:'Paqui', p:'CO', h:'quien hace el pan cada mañana'},
+    {w:'horno', p:'CO', h:'de donde sale el pan cada mañana'},
+    {w:'circularidad', p:'CO', h:'cómo las sobras de cocina vuelven a los animales'},
+    {w:'cero desperdicio', p:'CO', h:'la cocina que no tira nada'},
+    {w:'sobras', p:'CO', h:'lo que sobra en la cocina y adónde va'},
+    {w:'aceite de oliva', p:'CO', h:'el aceite que sale de los olivos de la finca'},
+    {w:'fermentos', p:'CO', h:'lo que fermenta en la cocina esta temporada'},
+    {w:'conservas', p:'CO', h:'lo que se guarda para el invierno'},
+    {w:'temporada', p:'CO', h:'lo que manda la temporada en la cocina'},
+    {w:'clases de cocina', p:'CO', h:'la clase de cocina con el chef'},
+    {w:'chef', p:'CO', h:'quien cocina lo que da la finca'},
+    {w:'plato', p:'CO', h:'lo que llega a la mesa'},
+    {w:'mesa', p:'CO', h:'donde termina todo lo que se cultiva'},
+    {w:'ingredientes', p:'CO', h:'lo que la finca da esta semana'},
+    {w:'receta', p:'CO', h:'lo que Paqui no sigue al pie de la letra'},
+    {w:'huerto', p:'HU', h:'el huerto de la finca'},
+    {w:'Gigi', p:'HU', h:'quien cuida las semillas heredadas'},
+    {w:'semillas heredadas', p:'HU', h:'las semillas que Gigi conserva de temporada en temporada'},
+    {w:'biointensivo', p:'HU', h:'el método con el que se cultiva el huerto'},
+    {w:'biodinámico', p:'HU', h:'el método con el que se cultiva el huerto'},
+    {w:'tomates', p:'HU', h:'lo que madura en el huerto en pleno verano'},
+    {w:'verduras', p:'HU', h:'lo que se cultiva en el huerto'},
+    {w:'hortalizas', p:'HU', h:'lo que se cultiva en el huerto'},
+    {w:'compost', p:'HU', h:'el ciclo que vuelve a la tierra'},
+    {w:'tierra', p:'HU', h:'la tierra del huerto, sin químicos desde hace años'},
+    {w:'siembra', p:'HU', h:'lo que se siembra esta temporada'},
+    {w:'cultivo', p:'HU', h:'el trabajo diario del huerto'},
+    {w:'riego', p:'HU', h:'cómo se cuida el agua en el huerto'},
+    {w:'cosecha', p:'HU', h:'lo que se cosecha esta semana en el huerto'},
+    {w:'jardín medicinal', p:'JM', h:'las 300 plantas que usan cocina y spa'},
+    {w:'plantas medicinales', p:'JM', h:'lo que crece en el jardín medicinal'},
+    {w:'flor de saúco', p:'JM', h:'la flor de saúco macerándose en un licor'},
+    {w:'verbena', p:'JM', h:'la verbena del jardín medicinal'},
+    {w:'violetas', p:'JM', h:'las violetas que entran en los licores de la casa'},
+    {w:'chiles', p:'JM', h:'los chiles que aromatizan un licor macerado'},
+    {w:'licor macerado', p:'JM', h:'el licor macerado con plantas del jardín'},
+    {w:'maceración', p:'JM', h:'lo que lleva días macerándose en un frasco'},
+    {w:'Paula', p:'JM', h:'quien formula los bálsamos con plantas del jardín'},
+    {w:'bálsamo', p:'JM', h:'el bálsamo que Paula formula en el spa'},
+    {w:'aceites del spa', p:'JM', h:'los aceites que Paula formula para el spa'},
+    {w:'caléndula', p:'JM', h:'una de las plantas del jardín medicinal'},
+    {w:'romero', p:'JM', h:'una de las plantas aromáticas del jardín'},
+    {w:'300 plantas', p:'JM', h:'las plantas que usan cocina y spa'},
+    {w:'facial de yogur y miel', p:'BI', h:'el facial de yogur y miel'},
+    {w:'yogur', p:'BI', h:'el yogur del facial de bienestar'},
+    {w:'Verónica', p:'BI', h:'quien guía las sesiones de respiración'},
+    {w:'respiración', p:'BI', h:'la sesión de respiración con Verónica'},
+    {w:'forest bathing', p:'BI', h:'el paseo de forest bathing con los burros'},
+    {w:'shinrin yoku', p:'BI', h:'el nombre japonés del baño de bosque'},
+    {w:'hammam', p:'BI', h:'el hammam del spa'},
+    {w:'sauna de leña', p:'BI', h:'la sauna de leña del spa'},
+    {w:'baño frío', p:'BI', h:'el baño frío después de la sauna'},
+    {w:'piscina climatizada', p:'BI', h:'la piscina climatizada de la finca'},
+    {w:'piscina de manantial', p:'BI', h:'la piscina de manantial al aire libre'},
+    {w:'masaje', p:'BI', h:'el masaje del spa'},
+    {w:'spa', p:'BI', h:'el ritual del spa — hammam, sauna, baño frío'},
+    {w:'bienestar', p:'BI', h:'una experiencia de bienestar de la finca'},
+    {w:'ritual', p:'BI', h:'un ritual de bienestar de la finca'},
+    {w:'calma', p:'BI', h:'un momento de calma en la finca'},
+    {w:'Roca Viva', p:'VB', h:'el proyecto de vino natural de la finca'},
+    {w:'vino natural', p:'VB', h:'el vino natural de Roca Viva'},
+    {w:'vinificación', p:'VB', h:'la vinificación sin intervención de Roca Viva'},
+    {w:'Borja', p:'VB', h:'quien crea los cócteles y mocktails con los licores de la casa'},
+    {w:'cóctel', p:'VB', h:'un cóctel de Borja con licores de la casa'},
+    {w:'mocktail', p:'VB', h:'un mocktail de Borja con licores de la casa'},
+    {w:'barra sin alcohol', p:'VB', h:'la barra sin alcohol de Borja'},
+    {w:'cata de vino', p:'VB', h:'una cata de vino natural'},
+    {w:'viñedo', p:'VB', h:'el viñedo de Roca Viva'},
+    {w:'maridaje', p:'VB', h:'el maridaje entre un plato y una copa'},
+    {w:'vendimia', p:'VB', h:'la vendimia de Roca Viva'},
+    {w:'barril', p:'VB', h:'donde reposa el vino natural'},
+    {w:'encinas', p:'PA', h:'las encinas milenarias, reserva protegida'},
+    {w:'olivos', p:'PA', h:'los olivos centenarios de la finca'},
+    {w:'Serranía de Ronda', p:'PA', h:'la Serranía de Ronda alrededor de la finca'},
+    {w:'700 hectáreas', p:'PA', h:'las 700 hectáreas de la finca'},
+    {w:'reserva natural', p:'PA', h:'la reserva natural protegida de la finca'},
+    {w:'estaciones', p:'PA', h:'cómo cambia la finca con cada estación'},
+    {w:'primavera', p:'PA', h:'lo que despierta en la finca en primavera'},
+    {w:'verano', p:'PA', h:'lo que madura en la finca en pleno verano'},
+    {w:'otoño', p:'PA', h:'lo que cambia en la finca en otoño'},
+    {w:'invierno', p:'PA', h:'la finca en pleno invierno'},
+    {w:'senderismo', p:'PA', h:'una caminata por los senderos de la finca'},
+    {w:'birdwatching', p:'PA', h:'las especies que se han visto esta semana en la reserva'},
+    {w:'BTT', p:'PA', h:'una ruta en bicicleta por la finca'},
+    {w:'tiro con arco', p:'PA', h:'una tarde de tiro con arco en la finca'},
+    {w:'paisaje', p:'PA', h:'el paisaje de la Serranía de Ronda'},
+    {w:'bosque', p:'PA', h:'el bosque de encinas de la finca'},
+    {w:'árboles', p:'PA', h:'las encinas, su sombra y la leña que dan'},
+    {w:'amanecer', p:'PA', h:'el amanecer sobre la finca'},
+    {w:'atardecer', p:'PA', h:'el atardecer sobre la finca'},
+    {w:'campo', p:'PA', h:'lo que florece en la finca esta temporada'},
+    {w:'luz', p:'PA', h:'la luz de la tarde sobre la finca'},
+    {w:'lluvia', p:'PA', h:'la lluvia cayendo sobre el paisaje'},
+    {w:'niebla', p:'PA', h:'la niebla de la mañana en la sierra'},
+    {w:'viento', p:'PA', h:'el viento en la Serranía de Ronda'},
+    {w:'sombra', p:'PA', h:'la sombra de las encinas'},
+    {w:'cielo estrellado', p:'PA', h:'el cielo nocturno de la sierra'},
+    {w:'leña', p:'PA', h:'la leña que alimenta la sauna'},
+    {w:'manantial', p:'PA', h:'el agua que nace en la finca'},
+    {w:'habitaciones', p:'EX', h:'las 9 habitaciones de la finca'},
+    {w:'suites', p:'EX', h:'las suites de la finca'},
+    {w:'bodas', p:'EX', h:'una boda celebrada en la finca'},
+    {w:'eventos privados', p:'EX', h:'un evento privado en la finca'},
+    {w:'alquiler exclusivo', p:'EX', h:'el alquiler exclusivo de toda la finca'},
+    {w:'Ecomaratón', p:'EX', h:'el Ecomaratón de noviembre'},
+    {w:'conciertos', p:'EX', h:'un concierto con artistas invitados'},
+    {w:'artistas invitados', p:'EX', h:'los artistas invitados a una velada'},
+    {w:'veladas', p:'EX', h:'una velada nocturna en la finca'},
+    {w:'huésped', p:'EX', h:'un huésped viviendo la finca por dentro'},
+    {w:'llegada', p:'EX', h:'el primer momento de un huésped en la finca'},
+    {w:'estancia', p:'EX', h:'los días de una estancia en la finca'},
+    {w:'biblioteca', p:'EX', h:'la biblioteca de la finca'},
+    {w:'silencio', p:'EX', h:'el silencio de la finca por la mañana'},
+    {w:'despedida', p:'EX', h:'el último momento antes de que un huésped se vaya'},
+    {w:'picnic', p:'EX', h:'una comida al aire libre en la finca'},
+    {w:'medallas recicladas', p:'EX', h:'las medallas del Ecomaratón, hechas de material reciclado'},
+    {w:'ruta del Ecomaratón', p:'EX', h:'la ruta del Ecomaratón entre Montecorto y El Gastor'},
+    {w:'familias', p:'FA', h:'una familia de huéspedes en la finca'},
+    {w:'niños', p:'FA', h:'un niño huésped descubriendo la finca'},
+    {w:'menú infantil', p:'FA', h:'el menú infantil, hecho con lo mismo que el de los adultos'},
+    {w:'desayuno', p:'FA', h:'la mesa de la mañana con lo que dio la finca'},
+    {w:'suites familiares', p:'FA', h:'las suites pensadas para familias'},
+    {w:'historias de descubrimiento', p:'FA', h:'las historias escritas para los huéspedes más pequeños'},
+    {w:'juego', p:'FA', h:'un niño jugando en algún rincón de la finca'},
+    {w:'mañana en familia', p:'FA', h:'una mañana entera en familia en la finca'},
+    {w:'especias', p:'JM', h:'lo que aromatiza desde el jardín medicinal'},
+    {w:'infusión', p:'JM', h:'un té hecho con plantas del jardín medicinal'},
+    {w:'fuego', p:'BI', h:'el fuego de la sauna de leña'}
+  ];
+  function buildDefaultWords(){
+    return RAW_DEFAULT.map(function(item){
+      return { w: item.w, categories: [PILLAR_NAMES[item.p]], h: item.h };
+    });
+  }
+
+  var WORDS = buildDefaultWords();
+
+  // ---- Text generation: one piece of text built from both words' categories + hook ----
+  function catsLine(item){
+    return (item.categories || []).join(', ');
+  }
+
+  var CLOSERS = [
+    'Antes de pensar en grabar algo nuevo, revisá si ya tenés fotos o clips sueltos de estas dos cosas — a veces alcanza con juntar lo que ya existe.',
+    'No hace falta que sea contenido nuevo: buscá en el rollo algo que ya conecte estas dos cosas.',
+    'Fijate primero qué tenés guardado de cada una por separado — capaz ya se puede armar algo solo editando junto.',
+    'Si no hay nada grabado todavía de esto, puede ser la excusa para un video corto — pero primero, revisá el archivo.'
+  ];
+
+  function generateText(a, b){
+    var closer = CLOSERS[Math.floor(Math.random() * CLOSERS.length)];
+    return a.w + ' (' + catsLine(a) + ')\n' + a.h + '.\n\n' +
+           b.w + ' (' + catsLine(b) + ')\n' + b.h + '.\n\n' +
+           closer;
+  }
+
+  // ---- UI wiring ----
+  var wordA = null, wordB = null;
+  var elWordA = document.getElementById('genWordA');
+  var elWordB = document.getElementById('genWordB');
+  var elPillarA = document.getElementById('genPillarA');
+  var elPillarB = document.getElementById('genPillarB');
+  var elCatsA = document.getElementById('genCatsA');
+  var elCatsB = document.getElementById('genCatsB');
+  var elOutputText = document.getElementById('genOutputText');
+  var btnA = document.getElementById('genRefreshA');
+  var btnB = document.getElementById('genRefreshB');
+  var btnAll = document.getElementById('genShuffleAll');
+  var sourceStatus = document.getElementById('genSourceStatus');
+  var sourceRefreshBtn = document.getElementById('genSourceRefresh');
+  var localBtn = document.getElementById('genLocalBtn');
+  var fileInput = document.getElementById('genFileInput');
+
+  function randomWord(exclude){
+    var pool = WORDS.filter(function(item){ return !exclude || item.w !== exclude.w; });
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+
+  function render(){
+    elWordA.textContent = wordA.w;
+    elWordB.textContent = wordB.w;
+    elPillarA.textContent = wordA.categories[0] || '—';
+    elPillarB.textContent = wordB.categories[0] || '—';
+    elCatsA.textContent = wordA.categories.length > 1 ? ('también: ' + wordA.categories.slice(1).join(', ')) : '';
+    elCatsB.textContent = wordB.categories.length > 1 ? ('también: ' + wordB.categories.slice(1).join(', ')) : '';
+    elOutputText.textContent = generateText(wordA, wordB);
+  }
+
+  function spin(btn){
+    btn.classList.add('spin');
+    setTimeout(function(){ btn.classList.remove('spin'); }, 500);
+  }
+
+  btnA.addEventListener('click', function(){ wordA = randomWord(wordB); spin(btnA); render(); });
+  btnB.addEventListener('click', function(){ wordB = randomWord(wordA); spin(btnB); render(); });
+  btnAll.addEventListener('click', function(){
+    wordA = randomWord(null); wordB = randomWord(wordA);
+    spin(btnA); spin(btnB); render();
+  });
+
+  // ---- Loading words: shared parsing (Excel and CSV both funnel through this) ----
+  function normHeader(h){
+    return (h || '').toString().trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  }
+  function matchCol(headers, patterns){
+    for (var i = 0; i < headers.length; i++){
+      var h = normHeader(headers[i]);
+      for (var j = 0; j < patterns.length; j++){
+        if (patterns[j].test(h)) return i;
+      }
+    }
+    return -1;
+  }
+  function parseRows(rows){
+    if (!rows.length) throw new Error('la hoja está vacía');
+    var headers = rows[0];
+    var idxWord = matchCol(headers, [/^palabra$/]);
+    var idxCat1 = matchCol(headers, [/categoria\s*1/]);
+    var idxCat2 = matchCol(headers, [/categoria\s*2/]);
+    var idxCat3 = matchCol(headers, [/categoria\s*3/]);
+    var idxHook = matchCol(headers, [/gancho/]);
+    var idxIncluir = matchCol(headers, [/incluir/]);
+    if (idxWord === -1) throw new Error('no encuentro una columna "Palabra"');
+
+    var out = [];
+    for (var r = 1; r < rows.length; r++){
+      var row = rows[r];
+      var word = (row[idxWord] || '').toString().trim();
+      if (!word) continue;
+      if (idxIncluir !== -1){
+        var inc = (row[idxIncluir] || '').toString().trim().toLowerCase();
+        if (inc === 'no') continue;
+      }
+      var cats = [idxCat1, idxCat2, idxCat3]
+        .filter(function(i){ return i !== -1; })
+        .map(function(i){ return (row[i] || '').toString().trim(); })
+        .filter(function(c){ return c.length > 0; });
+      if (!cats.length) cats = ['Sin categoría'];
+      var hook = idxHook !== -1 ? (row[idxHook] || '').toString().trim() : '';
+      if (!hook) hook = word;
+      out.push({ w: word, categories: cats, h: hook });
+    }
+    return out;
+  }
+  function parseWorkbookBytes(bytes){
+    var wb = XLSX.read(bytes, { type: 'array' });
+    var sheetName = wb.SheetNames.indexOf('Palabras clave') !== -1 ? 'Palabras clave' : wb.SheetNames[0];
+    var rows = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], { header: 1, defval: '' });
+    return parseRows(rows);
+  }
+
+  function applyWords(parsed, sourceLabel){
+    if (parsed.length < 2) throw new Error('encontré menos de 2 palabras usables');
+    WORDS = parsed;
+    sourceStatus.textContent = parsed.length + ' palabras · ' + sourceLabel;
+    wordA = randomWord(null);
+    wordB = randomWord(wordA);
+    render();
+  }
+
+  function loadFromDropbox(){
+    sourceStatus.textContent = 'Actualizando desde Dropbox…';
+    var url = toDirectDownload(DROPBOX_SHARE_URL);
+    fetch(url, { cache: 'no-store' })
+      .then(function(res){
+        if (!res.ok) throw new Error('respuesta ' + res.status);
+        return res.arrayBuffer();
+      })
+      .then(function(buf){
+        var bytes = new Uint8Array(buf);
+        var isZip = bytes.length > 1 && bytes[0] === 0x50 && bytes[1] === 0x4B; // 'PK' = xlsx
+        var parsed = isZip ? parseWorkbookBytes(bytes) : parseRows(Papa.parse(new TextDecoder('utf-8').decode(bytes), { skipEmptyLines: true }).data);
+        applyWords(parsed, 'actualizado desde Dropbox · ' + new Date().toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'}));
+      })
+      .catch(function(err){
+        sourceStatus.textContent = 'No pude traer el Excel de Dropbox (' + err.message + '). Usando la lista integrada — probá "Cargar Excel a mano" si tenés el archivo descargado.';
+      });
+  }
+
+  sourceRefreshBtn.addEventListener('click', loadFromDropbox);
+  localBtn.addEventListener('click', function(){ fileInput.click(); });
+
+  fileInput.addEventListener('change', function(e){
+    var file = e.target.files[0];
+    if (!file) return;
+    sourceStatus.textContent = 'Leyendo ' + file.name + '…';
+    var reader = new FileReader();
+    reader.onload = function(evt){
+      try {
+        var parsed = parseWorkbookBytes(new Uint8Array(evt.target.result));
+        applyWords(parsed, 'cargado desde ' + file.name);
+      } catch (err){
+        sourceStatus.textContent = 'No pude leer ese archivo (' + err.message + ').';
+      }
+    };
+    reader.onerror = function(){ sourceStatus.textContent = 'No pude leer ese archivo.'; };
+    reader.readAsArrayBuffer(file);
+  });
+
+  wordA = randomWord(null);
+  wordB = randomWord(wordA);
+  render();
+  loadFromDropbox();
+})();
+</script>
+</body>
+</html>
